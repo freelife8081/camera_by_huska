@@ -42,6 +42,13 @@ function startCamera() {
             track = stream.getVideoTracks()[0]; // Get the video track
             checkZoomCapability(); // Check if zoom is supported
             video.muted = true;  // Mute the video to prevent surround sound playback
+
+            // Mirror the video feed for the front camera
+            if (isUsingFrontCamera) {
+                video.style.transform = 'scaleX(-1)'; // Mirror for front camera
+            } else {
+                video.style.transform = 'scaleX(1)';  // No mirroring for back camera
+            }
         })
         .catch((err) => {
             console.error("Error accessing camera: ", err);
@@ -74,15 +81,24 @@ capturePhotoBtn.addEventListener('click', () => {
     const context = canvas.getContext('2d');
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
+
+    // If front camera, flip the image horizontally before drawing it
+    if (isUsingFrontCamera) {
+        context.translate(canvas.width, 0); // Move the context to the right
+        context.scale(-1, 1); // Flip the context horizontally
+    }
+
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     // Play shutter sound
     shutterSound.play();
 
-    // Open the captured photo in a new tab
+    // Download the captured photo as an image file
     const dataUrl = canvas.toDataURL('image/png');
-    const newWindow = window.open('about:blank', 'Captured Photo');
-    newWindow.document.write(`<img src="${dataUrl}" alt="Captured Photo">`);
+    const link = document.createElement('a');
+    link.href = dataUrl;
+    link.download = 'captured_image.png';
+    link.click(); // Trigger the download
 });
 
 // Toggle between front and back cameras
@@ -90,13 +106,6 @@ toggleCameraBtn.addEventListener('click', () => {
     isUsingFrontCamera = !isUsingFrontCamera;
     stopCamera(); // Stop the current stream before switching
     startCamera(); // Start with the new camera
-
-    // Mirror the video feed for the front camera (selfie mode)
-    if (isUsingFrontCamera) {
-        video.style.transform = 'scaleX(-1)'; // Mirror the image for front camera
-    } else {
-        video.style.transform = 'scaleX(1)';  // Reset for back camera
-    }
 });
 
 // Function to stop the camera stream
