@@ -21,7 +21,7 @@ let recordedChunks = [];
 let track; // To access the video track for zoom
 
 // Play intro sound and show intro text for 10 seconds
-introSound.play();
+introSound.play(); // Start intro sound
 setTimeout(() => {
     intro.style.display = 'none'; // Hide intro
     cameraSection.style.display = 'block'; // Show camera section
@@ -33,7 +33,7 @@ setTimeout(() => {
 function startCamera() {
     const constraints = {
         video: { facingMode: isUsingFrontCamera ? 'user' : 'environment' },
-        audio: true // Enable audio recording
+        audio: true // Enable audio for recording, but it will be muted in the video feed
     };
     navigator.mediaDevices.getUserMedia(constraints)
         .then((mediaStream) => {
@@ -41,6 +41,7 @@ function startCamera() {
             video.srcObject = stream;
             track = stream.getVideoTracks()[0]; // Get the video track
             checkZoomCapability(); // Check if zoom is supported
+            video.muted = true;  // Mute the video to prevent surround sound playback
         })
         .catch((err) => {
             console.error("Error accessing camera: ", err);
@@ -89,6 +90,13 @@ toggleCameraBtn.addEventListener('click', () => {
     isUsingFrontCamera = !isUsingFrontCamera;
     stopCamera(); // Stop the current stream before switching
     startCamera(); // Start with the new camera
+
+    // Mirror the video feed for the front camera (selfie mode)
+    if (isUsingFrontCamera) {
+        video.style.transform = 'scaleX(-1)'; // Mirror the image for front camera
+    } else {
+        video.style.transform = 'scaleX(1)';  // Reset for back camera
+    }
 });
 
 // Function to stop the camera stream
