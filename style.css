@@ -1,0 +1,67 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+#intro {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(90deg, #000, #1e1e1e);
+    animation: backgroundAnimation 10s ease-in-out infinite;
+}
+
+#intro-text {
+    font-size: 36px;
+    color: #fff;
+    opacity: 0;
+    animation: fadeInText 3s ease-in-out forwards;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Animation for fading in the text */
+@keyframes fadeInText {
+    0% { opacity: 0; transform: translateY(-20px); }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Background color animation for the intro */
+@keyframes backgroundAnimation {
+    0% { background-color: #000; }
+    50% { background-color: #333; }
+    100% { background-color: #000; }
+}
+
+.camera-container {
+    margin-top: 20px;
+}
+
+video {
+    border: 2px solid #ccc;
+    width: 640px;
+    height: 480px;
+}
+
+.controls {
+    margin-top: 20px;
+}
+
+button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #218838;
+}

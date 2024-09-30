@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera by Huska</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Intro Section -->
+    <div id="intro">
+        <h1 id="intro-text">Welcome to the camera made by Huska</h1>
+        <audio id="intro-sound" src="logointro.mp3" preload="auto"></audio> <!-- Replace with your chosen sound -->
+    </div>
+
+    <!-- Camera Section (Hidden initially) -->
+    <div class="camera-container" id="camera-section" style="display: none;">
+        <video id="video" autoplay></video>
+        <canvas id="canvas" style="display: none;"></canvas>
+    </div>
+
+    <!-- Controls Section -->
+    <div class="controls" id="controls-section" style="display: none;">
+        <button id="capture-btn">Capture</button>
+        <button id="save-btn" style="display:none;">Save Image</button>
+        <button id="toggle-camera">Switch Camera</button>
+        <audio id="shutter-sound" src="shuttersound.mp3" preload="auto"></audio> <!-- Replace with your shutter sound -->
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
