@@ -5,6 +5,7 @@ const startRecordBtn = document.getElementById('start-record-btn');
 const stopRecordBtn = document.getElementById('stop-record-btn');
 const capturePhotoBtn = document.getElementById('capture-photo-btn');
 const toggleCameraBtn = document.getElementById('toggle-camera');
+const flashlightBtn = document.createElement('button'); // Flashlight button
 const playback = document.getElementById('playback');
 const shutterSound = document.getElementById('shutter-sound');
 const introSound = document.getElementById('intro-sound');
@@ -18,7 +19,13 @@ let isUsingFrontCamera = true;
 let stream;
 let mediaRecorder;
 let recordedChunks = [];
-let track; // To access the video track for zoom
+let track; // To access the video track for zoom and torch (flashlight)
+let isFlashlightOn = false; // Flashlight state
+
+// Add Flashlight button to the controls
+flashlightBtn.textContent = 'Toggle Flashlight';
+flashlightBtn.style.display = 'none'; // Initially hidden
+controlsSection.appendChild(flashlightBtn);
 
 // Play intro sound and show intro text for 10 seconds
 introSound.play(); // Start intro sound
@@ -40,7 +47,7 @@ function startCamera() {
             stream = mediaStream;
             video.srcObject = stream;
             track = stream.getVideoTracks()[0]; // Get the video track
-            checkZoomCapability(); // Check if zoom is supported
+            checkZoomAndTorchCapability(); // Check if zoom and torch (flashlight) are supported
             video.muted = true;  // Mute the video to prevent surround sound playback
 
             // Mirror the video feed for the front camera
@@ -55,9 +62,11 @@ function startCamera() {
         });
 }
 
-// Check if zoom is supported by the camera
-function checkZoomCapability() {
+// Check if zoom and torch (flashlight) are supported by the camera
+function checkZoomAndTorchCapability() {
     const capabilities = track.getCapabilities();
+
+    // Check for zoom capability
     if (capabilities.zoom) {
         zoomSlider.min = capabilities.zoom.min;
         zoomSlider.max = capabilities.zoom.max;
@@ -73,6 +82,26 @@ function checkZoomCapability() {
         });
     } else {
         console.log("Zoom is not supported on this device.");
+    }
+
+    // Check for torch (flashlight) capability
+    if (capabilities.torch) {
+        flashlightBtn.style.display = 'inline'; // Show flashlight button
+
+        // Toggle flashlight when button is clicked
+        flashlightBtn.addEventListener('click', () => {
+            const flashOptions = { advanced: [{ torch: !isFlashlightOn }] };
+            track.applyConstraints(flashOptions)
+                .then(() => {
+                    isFlashlightOn = !isFlashlightOn;
+                    flashlightBtn.textContent = isFlashlightOn ? 'Turn Off Flashlight' : 'Turn On Flashlight';
+                })
+                .catch((err) => {
+                    console.error("Error toggling flashlight: ", err);
+                });
+        });
+    } else {
+        console.log("Flashlight is not supported on this device.");
     }
 }
 
