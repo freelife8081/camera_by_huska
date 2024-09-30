@@ -1,3 +1,4 @@
+/* General body styling */
 body {
     font-family: Arial, sans-serif;
     text-align: center;
@@ -6,6 +7,7 @@ body {
     padding: 0;
 }
 
+/* Intro section styling */
 #intro {
     display: flex;
     justify-content: center;
@@ -15,42 +17,53 @@ body {
     animation: backgroundAnimation 10s ease-in-out infinite;
 }
 
+/* Intro text animation */
 #intro-text {
-    font-size: 36px;
+    font-size: 28px;
     color: #fff;
     opacity: 0;
     animation: fadeInText 3s ease-in-out forwards;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-/* Animation for fading in the text */
+@media (min-width: 768px) {
+    #intro-text {
+        font-size: 36px;
+    }
+}
+
+/* Fade in text animation */
 @keyframes fadeInText {
     0% { opacity: 0; transform: translateY(-20px); }
-    50% { opacity: 0.5; }
     100% { opacity: 1; transform: translateY(0); }
 }
 
-/* Background color animation for the intro */
+/* Background color animation */
 @keyframes backgroundAnimation {
     0% { background-color: #000; }
     50% { background-color: #333; }
     100% { background-color: #000; }
 }
 
+/* Camera container styling */
 .camera-container {
     margin-top: 20px;
 }
 
+/* Video element styling */
 video {
     border: 2px solid #ccc;
-    width: 640px;
-    height: 480px;
+    width: 100%;
+    height: auto;
+    max-width: 640px;
 }
 
+/* Controls section styling */
 .controls {
     margin-top: 20px;
 }
 
+/* General button styling */
 button {
     background-color: #28a745;
     color: white;
@@ -62,6 +75,34 @@ button {
     transition: background-color 0.3s;
 }
 
+/* Hover effect for buttons */
 button:hover {
     background-color: #218838;
+}
+
+/* Zoom slider styling */
+#zoom-slider {
+    width: 200px;
+    margin-top: 10px;
+    display: none; /* Hidden until zoom capability is detected */
+}
+
+/* Zoom label styling */
+#zoom-label {
+    margin-right: 10px;
+    font-size: 16px;
+    color: #333;
+    display: none; /* Hidden until zoom capability is detected */
+}
+
+/* Playback video styling */
+#playback {
+    margin-top: 20px;
+    width: 100%;
+    max-width: 640px;
+}
+
+/* Hide canvas (used for capturing images) */
+canvas {
+    display: none;
 }
