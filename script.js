@@ -3,7 +3,7 @@ const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
 const startRecordBtn = document.getElementById('start-record-btn');
 const stopRecordBtn = document.getElementById('stop-record-btn');
-const saveVideoBtn = document.getElementById('save-video-btn');
+const capturePhotoBtn = document.getElementById('capture-photo-btn');
 const toggleCameraBtn = document.getElementById('toggle-camera');
 const playback = document.getElementById('playback');
 const shutterSound = document.getElementById('shutter-sound');
@@ -29,10 +29,11 @@ setTimeout(() => {
     startCamera(); // Start the camera
 }, 10000); // 10 seconds
 
-// Function to start camera stream
+// Function to start camera stream (with audio enabled)
 function startCamera() {
     const constraints = {
-        video: { facingMode: isUsingFrontCamera ? 'user' : 'environment' }
+        video: { facingMode: isUsingFrontCamera ? 'user' : 'environment' },
+        audio: true // Enable audio recording
     };
     navigator.mediaDevices.getUserMedia(constraints)
         .then((mediaStream) => {
@@ -67,6 +68,22 @@ function checkZoomCapability() {
     }
 }
 
+// Capture photo functionality
+capturePhotoBtn.addEventListener('click', () => {
+    const context = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Play shutter sound
+    shutterSound.play();
+
+    // Open the captured photo in a new tab
+    const dataUrl = canvas.toDataURL('image/png');
+    const newWindow = window.open('about:blank', 'Captured Photo');
+    newWindow.document.write(`<img src="${dataUrl}" alt="Captured Photo">`);
+});
+
 // Toggle between front and back cameras
 toggleCameraBtn.addEventListener('click', () => {
     isUsingFrontCamera = !isUsingFrontCamera;
@@ -98,10 +115,16 @@ startRecordBtn.addEventListener('click', () => {
             type: 'video/webm'
         });
         const videoURL = URL.createObjectURL(blob);
-        playback.src = videoURL;
-        playback.style.display = 'block';
-        saveVideoBtn.style.display = 'block';
-        saveVideo(blob); // Save the video locally
+
+        // Open the recorded video in a new page
+        const newWindow = window.open('about:blank', 'Recorded Video');
+        newWindow.document.write(`
+            <video controls autoplay>
+                <source src="${videoURL}" type="video/webm">
+                Your browser does not support the video tag.
+            </video>
+            <a href="${videoURL}" download="recorded_video.webm">Download Video</a>
+        `);
     };
 
     mediaRecorder.start();
@@ -115,13 +138,3 @@ stopRecordBtn.addEventListener('click', () => {
     stopRecordBtn.style.display = 'none';
     startRecordBtn.style.display = 'inline';
 });
-
-// Save the recorded video
-function saveVideo(blob) {
-    saveVideoBtn.addEventListener('click', () => {
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'recorded_video.webm';
-        link.click(); // Trigger the download
-    });
-}
